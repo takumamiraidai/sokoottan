@@ -14,6 +14,8 @@
 		7AFF0834BFF12CCD5D3D0742 /* MultipeerManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05F60624E2967BAC09C1D8A3 /* MultipeerManager.swift */; };
 		A1D9919FD6C5E6968E2F1BE3 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E115822C92FBD824142F725 /* ContentView.swift */; };
 		BD5196A7DF0D691F8265890F /* PeerInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E34DEB31AC5ABAF006AF58C /* PeerInfo.swift */; };
+		C1A2B3C4D5E6F70011223355 /* ChatMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1A2B3C4D5E6F70011223344 /* ChatMessage.swift */; };
+		D1A2B3C4D5E6F70011223355 /* ChatView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1A2B3C4D5E6F70011223344 /* ChatView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -22,6 +24,8 @@
 		6E115822C92FBD824142F725 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		742CF5CD3F94F419281DFCD7 /* OnboardingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingView.swift; sourceTree = "<group>"; };
 		7E34DEB31AC5ABAF006AF58C /* PeerInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PeerInfo.swift; sourceTree = "<group>"; };
+		C1A2B3C4D5E6F70011223344 /* ChatMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessage.swift; sourceTree = "<group>"; };
+		D1A2B3C4D5E6F70011223344 /* ChatView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatView.swift; sourceTree = "<group>"; };
 		833EDEE5D144117EA1FBDC47 /* sokoottann.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = sokoottann.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A18C71A04338947C8486CA6D /* sokoottannApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = sokoottannApp.swift; sourceTree = "<group>"; };
 		AB0218FD30D198D1B4AFB91F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
@@ -40,6 +44,7 @@
 		485115D41B3A5C5DC878E936 /* Models */ = {
 			isa = PBXGroup;
 			children = (
+				C1A2B3C4D5E6F70011223344 /* ChatMessage.swift */,
 				7E34DEB31AC5ABAF006AF58C /* PeerInfo.swift */,
 			);
 			path = Models;
@@ -68,6 +73,7 @@
 		D87D1C8DBA140274E42CB13A /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				D1A2B3C4D5E6F70011223344 /* ChatView.swift */,
 				6E115822C92FBD824142F725 /* ContentView.swift */,
 				EE5F11124F6ECCFB987271C5 /* DiscoveryView.swift */,
 				742CF5CD3F94F419281DFCD7 /* OnboardingView.swift */,
@@ -144,6 +150,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C1A2B3C4D5E6F70011223355 /* ChatMessage.swift in Sources */,
+				D1A2B3C4D5E6F70011223355 /* ChatView.swift in Sources */,
 				A1D9919FD6C5E6968E2F1BE3 /* ContentView.swift in Sources */,
 				13F9FA9A472799FC9FABF0CB /* DiscoveryView.swift in Sources */,
 				7AFF0834BFF12CCD5D3D0742 /* MultipeerManager.swift in Sources */,

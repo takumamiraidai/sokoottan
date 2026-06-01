@@ -265,17 +265,27 @@ struct PeerDotView: View {
                 .shadow(color: .green, radius: 7)
 
             // 名前ラベル（ドットの上）
-            Text(peer.displayName)
-                .font(.system(size: 11, weight: .bold, design: .rounded))
-                .foregroundStyle(.white)
-                .padding(.horizontal, 8)
-                .padding(.vertical, 3)
-                .background(
-                    Capsule()
-                        .fill(Color.black.opacity(0.72))
-                        .overlay(Capsule().stroke(Color.green.opacity(0.45), lineWidth: 1))
-                )
-                .offset(y: -26)
+            VStack(spacing: 2) {
+                Text(peer.displayName)
+                    .font(.system(size: 11, weight: .bold, design: .rounded))
+                    .foregroundStyle(.white)
+
+                HStack(spacing: 3) {
+                    Text(peer.directionArrow)
+                        .font(.system(size: 9))
+                    Text("\(peer.directionLabel) \(peer.distanceLabel)")
+                        .font(.system(size: 9, weight: .medium, design: .rounded))
+                        .foregroundStyle(Color(red: 0.5, green: 1.0, blue: 0.7))
+                }
+            }
+            .padding(.horizontal, 8)
+            .padding(.vertical, 4)
+            .background(
+                Capsule()
+                    .fill(Color.black.opacity(0.72))
+                    .overlay(Capsule().stroke(Color.green.opacity(0.45), lineWidth: 1))
+            )
+            .offset(y: -30)
         }
         .offset(x: offsetX, y: offsetY)
         .onAppear { dotPulse = true }

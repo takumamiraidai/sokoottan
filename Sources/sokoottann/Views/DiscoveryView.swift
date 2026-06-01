@@ -1,4 +1,5 @@
 import SwiftUI
+import MultipeerConnectivity
 
 struct DiscoveryView: View {
     let userName: String
@@ -6,6 +7,7 @@ struct DiscoveryView: View {
     @StateObject private var manager: MultipeerManager
     @State private var showPeerList = false
     @State private var newPeerBurst = false
+    @State private var chatPeer: PeerInfo? = nil
 
     init(userName: String) {
         self.userName = userName
@@ -60,11 +62,21 @@ struct DiscoveryView: View {
 
                 VStack {
                     Spacer()
-                    PeerListView(peers: manager.discoveredPeers, isShowing: $showPeerList)
+                    PeerListView(
+                        peers: manager.discoveredPeers,
+                        unreadPeers: manager.unreadPeers,
+                        isShowing: $showPeerList
+                    ) { peer in
+                        withAnimation(.spring(duration: 0.4)) { showPeerList = false }
+                        chatPeer = peer
+                    }
                 }
                 .ignoresSafeArea(edges: .bottom)
                 .transition(.move(edge: .bottom).combined(with: .opacity))
             }
+        }
+        .sheet(item: $chatPeer) { peer in
+            ChatView(peer: peer, manager: manager)
         }
         .onChange(of: manager.discoveredPeers.count) { oldCount, newCount in
             guard newCount > oldCount else { return }
@@ -259,7 +271,9 @@ struct DiscoveryView: View {
 
 struct PeerListView: View {
     let peers: [PeerInfo]
+    let unreadPeers: Set<MCPeerID>
     @Binding var isShowing: Bool
+    var onMessage: (PeerInfo) -> Void
 
     var body: some View {
         VStack(spacing: 0) {
@@ -291,7 +305,12 @@ struct PeerListView: View {
             ScrollView(showsIndicators: false) {
                 LazyVStack(spacing: 10) {
                     ForEach(peers) { peer in
-                        PeerRowView(peer: peer)
+                        PeerRowView(
+                            peer: peer,
+                            hasUnread: unreadPeers.contains(peer.id)
+                        ) {
+                            onMessage(peer)
+                        }
                     }
                 }
                 .padding(.horizontal, 16)
@@ -323,6 +342,8 @@ struct PeerListView: View {
 
 struct PeerRowView: View {
     let peer: PeerInfo
+    let hasUnread: Bool
+    var onMessage: () -> Void
     @State private var appeared = false
 
     var body: some View {
@@ -350,23 +371,52 @@ struct PeerRowView: View {
                     .font(.system(size: 16, weight: .semibold, design: .rounded))
                     .foregroundStyle(.white)
 
-                HStack(spacing: 5) {
-                    Circle()
-                        .fill(Color.green)
-                        .frame(width: 6, height: 6)
-                        .shadow(color: .green, radius: 3)
+                HStack(spacing: 8) {
+                    // 方向
+                    HStack(spacing: 3) {
+                        Text(peer.directionArrow)
+                            .font(.system(size: 11))
+                        Text(peer.directionLabel)
+                            .font(.system(size: 12, weight: .medium, design: .rounded))
+                    }
+                    .foregroundStyle(Color.cyan.opacity(0.8))
 
-                    Text("発見しました！")
-                        .font(.system(size: 12, weight: .medium, design: .rounded))
-                        .foregroundStyle(Color(red: 0.4, green: 1.0, blue: 0.6))
+                    Text("·")
+                        .foregroundStyle(.white.opacity(0.3))
+
+                    // 距離
+                    HStack(spacing: 3) {
+                        Image(systemName: "location.fill")
+                            .font(.system(size: 9))
+                        Text(peer.distanceLabel)
+                            .font(.system(size: 12, weight: .medium, design: .rounded))
+                    }
+                    .foregroundStyle(Color(red: 0.4, green: 1.0, blue: 0.6))
                 }
             }
 
             Spacer()
 
-            Image(systemName: "wave.3.right")
-                .font(.system(size: 17))
-                .foregroundStyle(.cyan.opacity(0.6))
+            // メッセージボタン
+            Button {
+                UIImpactFeedbackGenerator(style: .light).impactOccurred()
+                onMessage()
+            } label: {
+                ZStack(alignment: .topTrailing) {
+                    Image(systemName: "bubble.left.fill")
+                        .font(.system(size: 22))
+                        .foregroundStyle(.cyan.opacity(0.7))
+
+                    if hasUnread {
+                        Circle()
+                            .fill(Color.red)
+                            .frame(width: 10, height: 10)
+                            .offset(x: 3, y: -2)
+                    }
+                }
+                .frame(width: 44, height: 44)
+            }
+            .buttonStyle(.plain)
         }
         .padding(.horizontal, 16)
         .padding(.vertical, 13)
@@ -375,7 +425,10 @@ struct PeerRowView: View {
                 .fill(.white.opacity(0.05))
                 .overlay(
                     RoundedRectangle(cornerRadius: 16)
-                        .stroke(Color.cyan.opacity(0.12), lineWidth: 1)
+                        .stroke(
+                            hasUnread ? Color.cyan.opacity(0.4) : Color.cyan.opacity(0.12),
+                            lineWidth: hasUnread ? 1.5 : 1
+                        )
                 )
         )
         .scaleEffect(appeared ? 1 : 0.85)
