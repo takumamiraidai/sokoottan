@@ -5,6 +5,7 @@ struct DiscoveryView: View {
     let userName: String
 
     @StateObject private var manager: MultipeerManager
+    @StateObject private var headingManager = HeadingManager()
     @State private var showPeerList = false
     @State private var newPeerBurst = false
     @State private var chatPeer: PeerInfo? = nil
@@ -39,7 +40,8 @@ struct DiscoveryView: View {
                 RadarView(
                     peers: manager.discoveredPeers,
                     isSearching: manager.isSearching,
-                    userName: userName
+                    userName: userName,
+                    heading: headingManager.heading
                 )
 
                 Spacer()
@@ -87,6 +89,8 @@ struct DiscoveryView: View {
             }
         }
         .animation(.spring(duration: 0.4), value: showPeerList)
+        .onAppear { headingManager.start() }
+        .onDisappear { headingManager.stop() }
     }
 
     // MARK: - Header

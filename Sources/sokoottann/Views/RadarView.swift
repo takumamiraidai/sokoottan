@@ -6,30 +6,50 @@ struct RadarView: View {
     let peers: [PeerInfo]
     let isSearching: Bool
     let userName: String
+    /// コンパス方位（度, 0=北, 時計回り）
+    var heading: Double = 0
 
     private let radarSize: CGFloat = 300
 
     var body: some View {
         ZStack {
-            // グリッド（同心円＋十字線）
-            RadarGridView(size: radarSize)
+            // ── コンパス基準で回転するコンテンツ（グリッド＋ピア）──
+            ZStack {
+                // グリッド（同心円＋十字線）
+                RadarGridView(size: radarSize)
 
-            // ピアドット
-            ForEach(peers) { peer in
-                PeerDotView(peer: peer, radarSize: radarSize)
-                    .transition(.scale(scale: 0.1, anchor: .center).combined(with: .opacity))
+                // ピアドット
+                ForEach(peers) { peer in
+                    PeerDotView(peer: peer, radarSize: radarSize, headingDeg: heading)
+                        .transition(.scale(scale: 0.1, anchor: .center).combined(with: .opacity))
+                }
+
+                // アクティブ時のエフェクト
+                if isSearching {
+                    PulseRingView(radarSize: radarSize, delay: 0.0, color: .cyan)
+                    PulseRingView(radarSize: radarSize, delay: 0.9, color: .cyan)
+                    PulseRingView(radarSize: radarSize, delay: 1.8, color: .cyan)
+                    SweepView(radarSize: radarSize)
+                }
             }
+            // コンパス方位の分だけ反時計回りに回転 → 北が常に上
+            .rotationEffect(.degrees(-heading))
+            .animation(.easeOut(duration: 0.12), value: heading)
 
-            // アクティブ時のエフェクト
-            if isSearching {
-                // パルスリング x3（時間差）
-                PulseRingView(radarSize: radarSize, delay: 0.0, color: .cyan)
-                PulseRingView(radarSize: radarSize, delay: 0.9, color: .cyan)
-                PulseRingView(radarSize: radarSize, delay: 1.8, color: .cyan)
-
-                // スイープライン
-                SweepView(radarSize: radarSize)
+            // ── 北マーカー（常に上、回転しない）──
+            VStack {
+                HStack(spacing: 3) {
+                    Text("N")
+                        .font(.system(size: 11, weight: .black, design: .rounded))
+                        .foregroundStyle(.red.opacity(0.85))
+                    Image(systemName: "location.north.fill")
+                        .font(.system(size: 9))
+                        .foregroundStyle(.red.opacity(0.7))
+                }
+                .padding(.top, 6)
+                Spacer()
             }
+            .frame(width: radarSize, height: radarSize)
 
             // センター（自分）
             CenterAvatarView(userName: userName, isSearching: isSearching)
@@ -236,6 +256,8 @@ struct CenterAvatarView: View {
 struct PeerDotView: View {
     let peer: PeerInfo
     let radarSize: CGFloat
+    /// レーダーに適用されているコンパス回転量（ラベル逆回転に使用）
+    var headingDeg: Double = 0
 
     @State private var dotPulse: Bool = false
 
@@ -264,7 +286,7 @@ struct PeerDotView: View {
                 .frame(width: 13, height: 13)
                 .shadow(color: .green, radius: 7)
 
-            // 名前ラベル（ドットの上）
+            // 名前ラベル（コンパス回転を打ち消して常に読める向きに）
             VStack(spacing: 2) {
                 Text(peer.displayName)
                     .font(.system(size: 11, weight: .bold, design: .rounded))
@@ -285,9 +307,14 @@ struct PeerDotView: View {
                     .fill(Color.black.opacity(0.72))
                     .overlay(Capsule().stroke(Color.green.opacity(0.45), lineWidth: 1))
             )
+            // レーダーの回転を打ち消してラベルを常に正立させる
+            .rotationEffect(.degrees(headingDeg))
             .offset(y: -30)
         }
         .offset(x: offsetX, y: offsetY)
+        // NI が更新するたびにスムーズに移動
+        .animation(.easeOut(duration: 0.18), value: offsetX)
+        .animation(.easeOut(duration: 0.18), value: offsetY)
         .onAppear { dotPulse = true }
     }
 }

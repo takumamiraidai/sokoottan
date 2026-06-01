@@ -16,6 +16,7 @@
 		BD5196A7DF0D691F8265890F /* PeerInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E34DEB31AC5ABAF006AF58C /* PeerInfo.swift */; };
 		C1A2B3C4D5E6F70011223355 /* ChatMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1A2B3C4D5E6F70011223344 /* ChatMessage.swift */; };
 		D1A2B3C4D5E6F70011223355 /* ChatView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1A2B3C4D5E6F70011223344 /* ChatView.swift */; };
+		E1A2B3C4D5E6F70011223355 /* HeadingManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1A2B3C4D5E6F70011223344 /* HeadingManager.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -30,6 +31,7 @@
 		C1A2B3C4D5E6F70011223344 /* ChatMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessage.swift; sourceTree = "<group>"; };
 		D1A2B3C4D5E6F70011223344 /* ChatView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatView.swift; sourceTree = "<group>"; };
 		EE5F11124F6ECCFB987271C5 /* DiscoveryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DiscoveryView.swift; sourceTree = "<group>"; };
+		E1A2B3C4D5E6F70011223344 /* HeadingManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeadingManager.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXGroup section */
@@ -93,6 +95,7 @@
 		F677E02923B46EB7509ADFED /* Services */ = {
 			isa = PBXGroup;
 			children = (
+				E1A2B3C4D5E6F70011223344 /* HeadingManager.swift */,
 				05F60624E2967BAC09C1D8A3 /* MultipeerManager.swift */,
 			);
 			path = Services;
@@ -152,6 +155,7 @@
 			files = (
 				C1A2B3C4D5E6F70011223355 /* ChatMessage.swift in Sources */,
 				D1A2B3C4D5E6F70011223355 /* ChatView.swift in Sources */,
+				E1A2B3C4D5E6F70011223355 /* HeadingManager.swift in Sources */,
 				A1D9919FD6C5E6968E2F1BE3 /* ContentView.swift in Sources */,
 				13F9FA9A472799FC9FABF0CB /* DiscoveryView.swift in Sources */,
 				7AFF0834BFF12CCD5D3D0742 /* MultipeerManager.swift in Sources */,

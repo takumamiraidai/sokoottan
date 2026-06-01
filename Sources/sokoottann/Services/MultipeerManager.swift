@@ -26,7 +26,7 @@ final class MultipeerManager: NSObject, ObservableObject {
     init(displayName: String) {
         self.peerID = MCPeerID(displayName: displayName)
         self.session = MCSession(
-            peer: MCPeerID(displayName: displayName),
+            peer: self.peerID,          // ← 同じ peerID インスタンスを使う
             securityIdentity: nil,
             encryptionPreference: .required
         )
@@ -92,20 +92,34 @@ final class MultipeerManager: NSObject, ObservableObject {
     // MARK: - NearbyInteraction (private)
 
     private func startNearbyInteraction(with peerID: MCPeerID) {
+        // U1チップ非搭載デバイス・シミュレーター はスキップ
+        guard NISession.isSupported else {
+            print("⚠️ NearbyInteraction (UWB) not supported on this device")
+            return
+        }
         let ni = NISession()
         ni.delegate = self
         niSessions[peerID] = ni
+        print("🔵 NISession created for \(peerID.displayName), token: \(ni.discoveryToken != nil)")
         sendNIToken(to: peerID, niSession: ni)
     }
 
     private func sendNIToken(to peerID: MCPeerID, niSession: NISession) {
-        guard let token = niSession.discoveryToken else { return }   // シミュレーターではnil
+        guard let token = niSession.discoveryToken else {
+            print("⚠️ discoveryToken is nil (simulator?)")
+            return
+        }
         guard let tokenData = try? NSKeyedArchiver.archivedData(
             withRootObject: token, requiringSecureCoding: true
         ) else { return }
         let packet = DataPacket(type: .niToken, text: nil, niTokenData: tokenData)
         guard let data = try? JSONEncoder().encode(packet) else { return }
-        try? session.send(data, toPeers: [peerID], with: .reliable)
+        do {
+            try session.send(data, toPeers: [peerID], with: .reliable)
+            print("📤 Sent NI token to \(peerID.displayName)")
+        } catch {
+            print("⚠️ Failed to send NI token: \(error.localizedDescription)")
+        }
     }
 }
 
@@ -127,29 +141,47 @@ extension MultipeerManager: MCSessionDelegate {
     func session(_ session: MCSession, peer peerID: MCPeerID, didChange state: MCSessionState) {
         switch state {
         case .connected:
-            // MC接続確立 → NI セッション開始 & トークン送信
-            startNearbyInteraction(with: peerID)
+            print("✅ MC connected: \(peerID.displayName)")
+            // NISession はメインスレッドで生成・起動する
+            DispatchQueue.main.async {
+                self.startNearbyInteraction(with: peerID)
+            }
         case .notConnected:
-            niSessions[peerID]?.invalidate()
-            niSessions.removeValue(forKey: peerID)
+            print("❌ MC disconnected: \(peerID.displayName)")
+            DispatchQueue.main.async {
+                self.niSessions[peerID]?.invalidate()
+                self.niSessions.removeValue(forKey: peerID)
+            }
         default:
             break
         }
     }
 
     func session(_ session: MCSession, didReceive data: Data, fromPeer peerID: MCPeerID) {
-        guard let packet = try? JSONDecoder().decode(DataPacket.self, from: data) else { return }
+        guard let packet = try? JSONDecoder().decode(DataPacket.self, from: data) else {
+            print("⚠️ Failed to decode packet from \(peerID.displayName)")
+            return
+        }
         switch packet.type {
         case .niToken:
+            print("📡 Received NI token from \(peerID.displayName)")
             guard
                 let tokenData = packet.niTokenData,
                 let token = try? NSKeyedUnarchiver.unarchivedObject(
                     ofClass: NIDiscoveryToken.self, from: tokenData
-                ),
-                let niSession = niSessions[peerID]
-            else { return }
-            // 相手のトークンで NISession を起動
-            niSession.run(NINearbyPeerConfiguration(peerToken: token))
+                )
+            else {
+                print("⚠️ Failed to unarchive NI token")
+                return
+            }
+            DispatchQueue.main.async {
+                // NISession がまだなければ作成してから run する
+                if self.niSessions[peerID] == nil {
+                    self.startNearbyInteraction(with: peerID)
+                }
+                guard let niSession = self.niSessions[peerID] else { return }
+                niSession.run(NINearbyPeerConfiguration(peerToken: token))
+            }
 
         case .chat:
             guard let text = packet.text else { return }

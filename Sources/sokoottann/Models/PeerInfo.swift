@@ -80,7 +80,9 @@ struct PeerInfo: Identifiable, Equatable {
     }
 
     static func == (lhs: PeerInfo, rhs: PeerInfo) -> Bool {
-        lhs.id == rhs.id
+        lhs.id == rhs.id &&
+        lhs.niDistance == rhs.niDistance &&
+        lhs.niDirection == rhs.niDirection
     }
 }
 
