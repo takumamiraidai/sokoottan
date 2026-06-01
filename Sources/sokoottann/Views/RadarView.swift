@@ -239,8 +239,8 @@ struct PeerDotView: View {
 
     @State private var dotPulse: Bool = false
 
-    private var offsetX: CGFloat { cos(peer.angle) * (radarSize / 2 * peer.distance) }
-    private var offsetY: CGFloat { sin(peer.angle) * (radarSize / 2 * peer.distance) }
+    private var offsetX: CGFloat { cos(peer.radarAngle) * (radarSize / 2 * peer.radarDistanceFraction) }
+    private var offsetY: CGFloat { sin(peer.radarAngle) * (radarSize / 2 * peer.radarDistanceFraction) }
 
     var body: some View {
         ZStack(alignment: .center) {

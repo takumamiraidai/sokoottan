@@ -29,6 +29,8 @@
 		<string>_sokoita._tcp</string>
 		<string>_sokoita._udp</string>
 	</array>
+	<key>NSNearbyInteractionUsageDescription</key>
+	<string>近くにいる人との正確な距離と方向をリアルタイムに測定するために使用します</string>
 	<key>NSLocalNetworkUsageDescription</key>
 	<string>近くにいるユーザーを見つけるためにローカルネットワークを使用します</string>
 	<key>UIApplicationSceneManifest</key>
