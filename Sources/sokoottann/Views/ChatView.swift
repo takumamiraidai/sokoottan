@@ -8,6 +8,13 @@ struct ChatView: View {
 
     @State private var inputText: String = ""
     @FocusState private var isInputFocused: Bool
+    @State private var showSendError = false
+
+    private var isConnected: Bool {
+        manager.connectedPeerIDs.contains(where: {
+            $0 == peer.id || $0.displayName == peer.id.displayName
+        })
+    }
 
     private var chatMessages: [ChatMessage] {
         manager.messages[peer.id] ?? []
@@ -65,6 +72,11 @@ struct ChatView: View {
         .onAppear {
             manager.markAsRead(peerID: peer.id)
         }
+        .alert("送信できませんでした", isPresented: $showSendError) {
+            Button("OK", role: .cancel) {}
+        } message: {
+            Text("相手との接続が切れている可能性があります。\n探索画面に戻って再接続してください。")
+        }
     }
 
     // MARK: - Header
@@ -102,10 +114,22 @@ struct ChatView: View {
                     .foregroundStyle(.white)
 
                 HStack(spacing: 6) {
-                    Text(peer.directionArrow)
-                        .font(.system(size: 12))
-                    Text("\(peer.directionLabel) · \(peer.distanceLabel)")
-                        .font(.system(size: 12, weight: .medium, design: .rounded))
+                    // 接続状態インジケーター
+                    Circle()
+                        .fill(isConnected ? Color.green : Color.orange)
+                        .frame(width: 7, height: 7)
+                    Text(isConnected ? "接続済み" : "接続中...")
+                        .font(.system(size: 11, weight: .medium, design: .rounded))
+                        .foregroundStyle(isConnected ? Color.green.opacity(0.9) : Color.orange.opacity(0.9))
+                    if isConnected {
+                        Text("·")
+                            .font(.system(size: 11))
+                            .foregroundStyle(.white.opacity(0.3))
+                        Text(peer.directionArrow)
+                            .font(.system(size: 12))
+                        Text("\(peer.directionLabel) · \(peer.distanceLabel)")
+                            .font(.system(size: 12, weight: .medium, design: .rounded))
+                    }
                 }
                 .foregroundStyle(Color.cyan.opacity(0.8))
             }
@@ -193,9 +217,14 @@ struct ChatView: View {
     private func sendMessage() {
         let text = inputText.trimmingCharacters(in: .whitespaces)
         guard !text.isEmpty else { return }
-        manager.sendMessage(text, to: peer.id)
-        inputText = ""
-        UIImpactFeedbackGenerator(style: .light).impactOccurred()
+        let success = manager.sendMessage(text, to: peer.id)
+        if success {
+            inputText = ""
+            UIImpactFeedbackGenerator(style: .light).impactOccurred()
+        } else {
+            showSendError = true
+            UINotificationFeedbackGenerator().notificationOccurred(.error)
+        }
     }
 }
 

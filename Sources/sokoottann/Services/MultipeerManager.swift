@@ -10,13 +10,16 @@ final class MultipeerManager: NSObject, ObservableObject {
 
     @Published var discoveredPeers: [PeerInfo] = []
     @Published var isSearching: Bool = false
+    /// 実際に MC セッションが接続されているピア ID セット（UI 表示用）
+    @Published var connectedPeerIDs: Set<MCPeerID> = []
     /// ピアIDをキーにしたチャット履歴
     @Published var messages: [MCPeerID: [ChatMessage]] = [:]
     /// 未読メッセージのあるピアIDセット
     @Published var unreadPeers: Set<MCPeerID> = []
 
     private let peerID: MCPeerID
-    private let session: MCSession
+    /// MCSession は disconnect() 後に再利用できないため var にして毎回作り直す
+    private var session: MCSession
     private var advertiser: MCNearbyServiceAdvertiser?
     private var browser: MCNearbyServiceBrowser?
 
@@ -26,7 +29,7 @@ final class MultipeerManager: NSObject, ObservableObject {
     init(displayName: String) {
         self.peerID = MCPeerID(displayName: displayName)
         self.session = MCSession(
-            peer: self.peerID,          // ← 同じ peerID インスタンスを使う
+            peer: self.peerID,
             securityIdentity: nil,
             encryptionPreference: .required
         )
@@ -38,6 +41,20 @@ final class MultipeerManager: NSObject, ObservableObject {
 
     func startSearching() {
         guard !isSearching else { return }
+
+        // NISession を全てリセット
+        niSessions.values.forEach { $0.invalidate() }
+        niSessions.removeAll()
+        connectedPeerIDs.removeAll()
+
+        // CRITICAL: MCSession は disconnect() 後に再利用不可 → 毎回新規作成
+        let freshSession = MCSession(
+            peer: peerID,
+            securityIdentity: nil,
+            encryptionPreference: .required
+        )
+        freshSession.delegate = self
+        session = freshSession
 
         let adv = MCNearbyServiceAdvertiser(
             peer: peerID,
@@ -63,22 +80,35 @@ final class MultipeerManager: NSObject, ObservableObject {
         advertiser = nil
         browser = nil
         isSearching = false
+        connectedPeerIDs.removeAll()
         niSessions.values.forEach { $0.invalidate() }
         niSessions.removeAll()
         discoveredPeers.removeAll()
     }
 
     /// 指定ピアにテキストメッセージを送信する
-    func sendMessage(_ text: String, to peerID: MCPeerID) {
+    /// - Returns: 送信に成功したか
+    @discardableResult
+    func sendMessage(_ text: String, to targetPeerID: MCPeerID) -> Bool {
+        // session.connectedPeers から実際に接続中の MCPeerID を取得
+        // (discoveredPeers のIDと identity が一致しない場合があるため displayName で照合)
+        guard let connectedPeer = session.connectedPeers.first(where: {
+            $0 == targetPeerID || $0.displayName == targetPeerID.displayName
+        }) else {
+            print("⚠️ 送信失敗: \(targetPeerID.displayName) は未接続")
+            return false
+        }
         let packet = DataPacket(type: .chat, text: text, niTokenData: nil)
-        guard let data = try? JSONEncoder().encode(packet) else { return }
+        guard let data = try? JSONEncoder().encode(packet) else { return false }
         do {
-            try session.send(data, toPeers: [peerID], with: .reliable)
+            try session.send(data, toPeers: [connectedPeer], with: .reliable)
             DispatchQueue.main.async {
-                self.messages[peerID, default: []].append(ChatMessage(text: text, isFromSelf: true))
+                self.messages[targetPeerID, default: []].append(ChatMessage(text: text, isFromSelf: true))
             }
+            return true
         } catch {
             print("⚠️ Send error: \(error.localizedDescription)")
+            return false
         }
     }
 
@@ -142,13 +172,15 @@ extension MultipeerManager: MCSessionDelegate {
         switch state {
         case .connected:
             print("✅ MC connected: \(peerID.displayName)")
-            // NISession はメインスレッドで生成・起動する
             DispatchQueue.main.async {
+                self.connectedPeerIDs.insert(peerID)
+                // NISession はメインスレッドで生成・起動する
                 self.startNearbyInteraction(with: peerID)
             }
         case .notConnected:
             print("❌ MC disconnected: \(peerID.displayName)")
             DispatchQueue.main.async {
+                self.connectedPeerIDs.remove(peerID)
                 self.niSessions[peerID]?.invalidate()
                 self.niSessions.removeValue(forKey: peerID)
             }
@@ -210,8 +242,16 @@ extension MultipeerManager: MCNearbyServiceAdvertiserDelegate {
         withContext context: Data?,
         invitationHandler: @escaping (Bool, MCSession?) -> Void
     ) {
-        // 招待を自動承諾（接続確立のため）
-        invitationHandler(true, session)
+        // 既に接続済みなら拒否して二重接続を防ぐ
+        let alreadyConnected = session.connectedPeers.contains(where: {
+            $0 == peerID || $0.displayName == peerID.displayName
+        })
+        if alreadyConnected {
+            print("⚠️ 招待拒否（既接続）: \(peerID.displayName)")
+            invitationHandler(false, nil)
+        } else {
+            invitationHandler(true, session)
+        }
     }
 }
 
@@ -221,7 +261,7 @@ extension MultipeerManager: MCNearbyServiceBrowserDelegate {
     func browser(_ browser: MCNearbyServiceBrowser, foundPeer peerID: MCPeerID, withDiscoveryInfo info: [String: String]?) {
         DispatchQueue.main.async { [weak self] in
             guard let self else { return }
-            guard !self.discoveredPeers.contains(where: { $0.id == peerID }) else { return }
+            guard !self.discoveredPeers.contains(where: { $0.id.displayName == peerID.displayName }) else { return }
 
             let angle = Double.random(in: 0 ..< (2 * .pi))
             let distance = CGFloat.random(in: 0.28 ... 0.74)
@@ -231,10 +271,17 @@ extension MultipeerManager: MCNearbyServiceBrowserDelegate {
                 fallbackAngle: angle,
                 fallbackDistance: distance
             )
-
             self.discoveredPeers.append(peer)
         }
-        // 接続確立のために招待を送る
+
+        // 既に接続済みなら招待しない（二重接続防止）
+        let alreadyConnected = session.connectedPeers.contains(where: {
+            $0 == peerID || $0.displayName == peerID.displayName
+        })
+        guard !alreadyConnected else {
+            print("ℹ️ 招待スキップ（既接続）: \(peerID.displayName)")
+            return
+        }
         browser.invitePeer(peerID, to: session, withContext: nil, timeout: 30)
     }
 
