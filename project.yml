@@ -1,6 +1,6 @@
 name: sokoottann
 options:
-  bundleIdPrefix: com.sokoottann
+  bundleIdPrefix: com.soko
   deploymentTarget:
     iOS: "17.0"
   xcodeVersion: "15.0"
@@ -12,23 +12,30 @@ targets:
     deploymentTarget: "17.0"
     sources:
       - Sources
+      - path: Assets.xcassets
+        buildPhase: resources
     info:
       path: Sources/sokoottann/Info.plist
       properties:
         CFBundleDisplayName: そこいた！
+        CFBundleIconName: AppIcon
         UILaunchScreen: {}
         UIApplicationSceneManifest:
           UIApplicationSupportsMultipleScenes: false
           UISceneConfigurations: {}
-        NSBluetoothAlwaysUsageDescription: "近くにいるユーザーを探すためにBluetoothを使用します"
-        NSBluetoothPeripheralUsageDescription: "近くにいるユーザーを探すためにBluetoothを使用します"
         NSLocalNetworkUsageDescription: "近くにいるユーザーを見つけるためにローカルネットワークを使用します"
+        NSMotionUsageDescription: "歩いた方向と距離をもとに相手の位置を推定するために使用します"
+        NSNearbyInteractionUsageDescription: "近くにいる人との正確な距離と方向をリアルタイムに測定するために使用します"
         NSBonjourServices:
           - "_sokoita._tcp"
           - "_sokoita._udp"
+        NSBluetoothAlwaysUsageDescription: "近くにいる人を Bluetooth で確実に見つけるために使用します"
+        NSBluetoothPeripheralUsageDescription: "近くにいる人を Bluetooth で確実に見つけるために使用します"
     settings:
       base:
-        PRODUCT_BUNDLE_IDENTIFIER: com.sokoottann.app
+        PRODUCT_BUNDLE_IDENTIFIER: com.soko.ottan
         SWIFT_VERSION: "5.9"
         TARGETED_DEVICE_FAMILY: "1"
-        DEVELOPMENT_TEAM: ""
+        DEVELOPMENT_TEAM: 9PYJ8Z7APK
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+        ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS: YES

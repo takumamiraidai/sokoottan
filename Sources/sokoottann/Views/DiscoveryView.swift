@@ -1,18 +1,18 @@
 import SwiftUI
-import MultipeerConnectivity
 
 struct DiscoveryView: View {
     let userName: String
 
-    @StateObject private var manager: MultipeerManager
+    @StateObject private var manager: UWBManager
     @StateObject private var headingManager = HeadingManager()
     @State private var showPeerList = false
     @State private var newPeerBurst = false
     @State private var chatPeer: PeerInfo? = nil
+    @State private var alignPeer: PeerInfo? = nil
 
     init(userName: String) {
         self.userName = userName
-        _manager = StateObject(wrappedValue: MultipeerManager(displayName: userName))
+        _manager = StateObject(wrappedValue: UWBManager(displayName: userName))
     }
 
     var body: some View {
@@ -71,6 +71,9 @@ struct DiscoveryView: View {
                     ) { peer in
                         withAnimation(.spring(duration: 0.4)) { showPeerList = false }
                         chatPeer = peer
+                    } onAlign: { peer in
+                        withAnimation(.spring(duration: 0.4)) { showPeerList = false }
+                        alignPeer = peer
                     }
                 }
                 .ignoresSafeArea(edges: .bottom)
@@ -80,6 +83,9 @@ struct DiscoveryView: View {
         .sheet(item: $chatPeer) { peer in
             ChatView(peer: peer, manager: manager)
         }
+        .sheet(item: $alignPeer) { peer in
+            AlignmentView(peer: peer, manager: manager, headingManager: headingManager)
+        }
         .onChange(of: manager.discoveredPeers.count) { oldCount, newCount in
             guard newCount > oldCount else { return }
             UIImpactFeedbackGenerator(style: .medium).impactOccurred()
@@ -88,8 +94,14 @@ struct DiscoveryView: View {
                 withAnimation { newPeerBurst = false }
             }
         }
+        .onChange(of: headingManager.heading) { _, newHeading in
+            manager.updateMyHeading(newHeading)
+        }
         .animation(.spring(duration: 0.4), value: showPeerList)
-        .onAppear { headingManager.start() }
+        .onAppear {
+            headingManager.start()
+            manager.startSearching()
+        }
         .onDisappear { headingManager.stop() }
     }
 
@@ -275,9 +287,10 @@ struct DiscoveryView: View {
 
 struct PeerListView: View {
     let peers: [PeerInfo]
-    let unreadPeers: Set<MCPeerID>
+    let unreadPeers: Set<String>
     @Binding var isShowing: Bool
     var onMessage: (PeerInfo) -> Void
+    var onAlign:   (PeerInfo) -> Void
 
     var body: some View {
         VStack(spacing: 0) {
@@ -314,6 +327,8 @@ struct PeerListView: View {
                             hasUnread: unreadPeers.contains(peer.id)
                         ) {
                             onMessage(peer)
+                        } onAlign: {
+                            onAlign(peer)
                         }
                     }
                 }
@@ -348,6 +363,7 @@ struct PeerRowView: View {
     let peer: PeerInfo
     let hasUnread: Bool
     var onMessage: () -> Void
+    var onAlign:   () -> Void
     @State private var appeared = false
 
     var body: some View {
@@ -400,6 +416,18 @@ struct PeerRowView: View {
             }
 
             Spacer()
+
+            // 出会うボタン
+            Button {
+                UIImpactFeedbackGenerator(style: .medium).impactOccurred()
+                onAlign()
+            } label: {
+                Image(systemName: "figure.walk")
+                    .font(.system(size: 20, weight: .semibold))
+                    .foregroundStyle(Color(red: 0.2, green: 1.0, blue: 0.5).opacity(0.85))
+                    .frame(width: 44, height: 44)
+            }
+            .buttonStyle(.plain)
 
             // メッセージボタン
             Button {

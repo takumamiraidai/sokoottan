@@ -8,6 +8,8 @@
 	<string>そこいた！</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
+	<key>CFBundleIconName</key>
+	<string>AppIcon</string>
 	<key>CFBundleIdentifier</key>
 	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
 	<key>CFBundleInfoDictionaryVersion</key>
@@ -21,18 +23,20 @@
 	<key>CFBundleVersion</key>
 	<string>1</string>
 	<key>NSBluetoothAlwaysUsageDescription</key>
-	<string>近くにいるユーザーを探すためにBluetoothを使用します</string>
+	<string>近くにいる人を Bluetooth で確実に見つけるために使用します</string>
 	<key>NSBluetoothPeripheralUsageDescription</key>
-	<string>近くにいるユーザーを探すためにBluetoothを使用します</string>
+	<string>近くにいる人を Bluetooth で確実に見つけるために使用します</string>
 	<key>NSBonjourServices</key>
 	<array>
 		<string>_sokoita._tcp</string>
 		<string>_sokoita._udp</string>
 	</array>
-	<key>NSNearbyInteractionUsageDescription</key>
-	<string>近くにいる人との正確な距離と方向をリアルタイムに測定するために使用します</string>
 	<key>NSLocalNetworkUsageDescription</key>
 	<string>近くにいるユーザーを見つけるためにローカルネットワークを使用します</string>
+	<key>NSMotionUsageDescription</key>
+	<string>歩いた方向と距離をもとに相手の位置を推定するために使用します</string>
+	<key>NSNearbyInteractionUsageDescription</key>
+	<string>近くにいる人との正確な距離と方向をリアルタイムに測定するために使用します</string>
 	<key>UIApplicationSceneManifest</key>
 	<dict>
 		<key>UIApplicationSupportsMultipleScenes</key>

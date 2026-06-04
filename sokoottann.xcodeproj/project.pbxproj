@@ -3,35 +3,41 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 63;
+	objectVersion = 54;
 	objects = {
 
 /* Begin PBXBuildFile section */
 		13F9FA9A472799FC9FABF0CB /* DiscoveryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE5F11124F6ECCFB987271C5 /* DiscoveryView.swift */; };
+		25E47DF977AD0CFE2A53344D /* WalkingBearingEstimator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48B0EA9EF53BBB3DC2DD47B3 /* WalkingBearingEstimator.swift */; };
+		3BE75008A7B9D724365FAB99 /* UWBManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = C16A92441FFBA3EB19C3A417 /* UWBManager.swift */; };
+		5739568583C8456982A33E84 /* ChatView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CFD14C229678A0454BFCD90 /* ChatView.swift */; };
 		5836075B952FA579911BF621 /* RadarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4009222760CF5F12FF94FFFC /* RadarView.swift */; };
 		5952BF459221B3A60E2F6F93 /* sokoottannApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = A18C71A04338947C8486CA6D /* sokoottannApp.swift */; };
 		6E82422D590BE6F24099E143 /* OnboardingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 742CF5CD3F94F419281DFCD7 /* OnboardingView.swift */; };
-		7AFF0834BFF12CCD5D3D0742 /* MultipeerManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05F60624E2967BAC09C1D8A3 /* MultipeerManager.swift */; };
+		840B26570CB0E2986625DF90 /* HeadingManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF0DE97443329F46E5AD522E /* HeadingManager.swift */; };
+		88BA9BD49F6F635F1A318EC0 /* ChatMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2141426491EEDAA1A35EFAA6 /* ChatMessage.swift */; };
+		9430C2CDD32C0FBE04D8E45E /* AlignmentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 87DAF50A5CF203C2BB46BBA7 /* AlignmentView.swift */; };
 		A1D9919FD6C5E6968E2F1BE3 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E115822C92FBD824142F725 /* ContentView.swift */; };
+		B00AB973A59BF63E82EAFABF /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 2D139C5639A7E0E2995DFB72 /* Assets.xcassets */; };
 		BD5196A7DF0D691F8265890F /* PeerInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E34DEB31AC5ABAF006AF58C /* PeerInfo.swift */; };
-		C1A2B3C4D5E6F70011223355 /* ChatMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1A2B3C4D5E6F70011223344 /* ChatMessage.swift */; };
-		D1A2B3C4D5E6F70011223355 /* ChatView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1A2B3C4D5E6F70011223344 /* ChatView.swift */; };
-		E1A2B3C4D5E6F70011223355 /* HeadingManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1A2B3C4D5E6F70011223344 /* HeadingManager.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		05F60624E2967BAC09C1D8A3 /* MultipeerManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MultipeerManager.swift; sourceTree = "<group>"; };
+		0CFD14C229678A0454BFCD90 /* ChatView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatView.swift; sourceTree = "<group>"; };
+		2141426491EEDAA1A35EFAA6 /* ChatMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessage.swift; sourceTree = "<group>"; };
+		2D139C5639A7E0E2995DFB72 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		4009222760CF5F12FF94FFFC /* RadarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RadarView.swift; sourceTree = "<group>"; };
+		48B0EA9EF53BBB3DC2DD47B3 /* WalkingBearingEstimator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WalkingBearingEstimator.swift; sourceTree = "<group>"; };
 		6E115822C92FBD824142F725 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		742CF5CD3F94F419281DFCD7 /* OnboardingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingView.swift; sourceTree = "<group>"; };
 		7E34DEB31AC5ABAF006AF58C /* PeerInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PeerInfo.swift; sourceTree = "<group>"; };
-		833EDEE5D144117EA1FBDC47 /* sokoottann.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = sokoottann.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		833EDEE5D144117EA1FBDC47 /* sokoottann.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = sokoottann.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		87DAF50A5CF203C2BB46BBA7 /* AlignmentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlignmentView.swift; sourceTree = "<group>"; };
 		A18C71A04338947C8486CA6D /* sokoottannApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = sokoottannApp.swift; sourceTree = "<group>"; };
 		AB0218FD30D198D1B4AFB91F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
-		C1A2B3C4D5E6F70011223344 /* ChatMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessage.swift; sourceTree = "<group>"; };
-		D1A2B3C4D5E6F70011223344 /* ChatView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatView.swift; sourceTree = "<group>"; };
+		C16A92441FFBA3EB19C3A417 /* UWBManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UWBManager.swift; sourceTree = "<group>"; };
 		EE5F11124F6ECCFB987271C5 /* DiscoveryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DiscoveryView.swift; sourceTree = "<group>"; };
-		E1A2B3C4D5E6F70011223344 /* HeadingManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeadingManager.swift; sourceTree = "<group>"; };
+		EF0DE97443329F46E5AD522E /* HeadingManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeadingManager.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXGroup section */
@@ -46,7 +52,7 @@
 		485115D41B3A5C5DC878E936 /* Models */ = {
 			isa = PBXGroup;
 			children = (
-				C1A2B3C4D5E6F70011223344 /* ChatMessage.swift */,
+				2141426491EEDAA1A35EFAA6 /* ChatMessage.swift */,
 				7E34DEB31AC5ABAF006AF58C /* PeerInfo.swift */,
 			);
 			path = Models;
@@ -75,7 +81,8 @@
 		D87D1C8DBA140274E42CB13A /* Views */ = {
 			isa = PBXGroup;
 			children = (
-				D1A2B3C4D5E6F70011223344 /* ChatView.swift */,
+				87DAF50A5CF203C2BB46BBA7 /* AlignmentView.swift */,
+				0CFD14C229678A0454BFCD90 /* ChatView.swift */,
 				6E115822C92FBD824142F725 /* ContentView.swift */,
 				EE5F11124F6ECCFB987271C5 /* DiscoveryView.swift */,
 				742CF5CD3F94F419281DFCD7 /* OnboardingView.swift */,
@@ -87,6 +94,7 @@
 		DEB704C401361DA1F86A6593 = {
 			isa = PBXGroup;
 			children = (
+				2D139C5639A7E0E2995DFB72 /* Assets.xcassets */,
 				A32F926E0568F683AD71ADF6 /* Sources */,
 				3917785E4FCBB8336F2DDDBE /* Products */,
 			);
@@ -95,8 +103,9 @@
 		F677E02923B46EB7509ADFED /* Services */ = {
 			isa = PBXGroup;
 			children = (
-				E1A2B3C4D5E6F70011223344 /* HeadingManager.swift */,
-				05F60624E2967BAC09C1D8A3 /* MultipeerManager.swift */,
+				EF0DE97443329F46E5AD522E /* HeadingManager.swift */,
+				C16A92441FFBA3EB19C3A417 /* UWBManager.swift */,
+				48B0EA9EF53BBB3DC2DD47B3 /* WalkingBearingEstimator.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -109,6 +118,7 @@
 			buildConfigurationList = 3AE9BC77295F319BE8F55D34 /* Build configuration list for PBXNativeTarget "sokoottann" */;
 			buildPhases = (
 				C3FA7BF16FE21905F17B7A00 /* Sources */,
+				F26DD4D97302F18CA4126752 /* Resources */,
 			);
 			buildRules = (
 			);
@@ -129,6 +139,11 @@
 			attributes = {
 				BuildIndependentTargetsInParallel = YES;
 				LastUpgradeCheck = 1500;
+				TargetAttributes = {
+					4B100385F44DF39C865458E7 = {
+						DevelopmentTeam = 9PYJ8Z7APK;
+					};
+				};
 			};
 			buildConfigurationList = 23BCE2C5DFE006C84192A31A /* Build configuration list for PBXProject "sokoottann" */;
 			compatibilityVersion = "Xcode 14.0";
@@ -140,6 +155,7 @@
 			);
 			mainGroup = DEB704C401361DA1F86A6593;
 			minimizedProjectReferenceProxies = 1;
+			preferredProjectObjectVersion = 54;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
@@ -148,20 +164,33 @@
 		};
 /* End PBXProject section */
 
+/* Begin PBXResourcesBuildPhase section */
+		F26DD4D97302F18CA4126752 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B00AB973A59BF63E82EAFABF /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
 /* Begin PBXSourcesBuildPhase section */
 		C3FA7BF16FE21905F17B7A00 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				C1A2B3C4D5E6F70011223355 /* ChatMessage.swift in Sources */,
-				D1A2B3C4D5E6F70011223355 /* ChatView.swift in Sources */,
-				E1A2B3C4D5E6F70011223355 /* HeadingManager.swift in Sources */,
+				9430C2CDD32C0FBE04D8E45E /* AlignmentView.swift in Sources */,
+				88BA9BD49F6F635F1A318EC0 /* ChatMessage.swift in Sources */,
+				5739568583C8456982A33E84 /* ChatView.swift in Sources */,
 				A1D9919FD6C5E6968E2F1BE3 /* ContentView.swift in Sources */,
 				13F9FA9A472799FC9FABF0CB /* DiscoveryView.swift in Sources */,
-				7AFF0834BFF12CCD5D3D0742 /* MultipeerManager.swift in Sources */,
+				840B26570CB0E2986625DF90 /* HeadingManager.swift in Sources */,
 				6E82422D590BE6F24099E143 /* OnboardingView.swift in Sources */,
 				BD5196A7DF0D691F8265890F /* PeerInfo.swift in Sources */,
 				5836075B952FA579911BF621 /* RadarView.swift in Sources */,
+				3BE75008A7B9D724365FAB99 /* UWBManager.swift in Sources */,
+				25E47DF977AD0CFE2A53344D /* WalkingBearingEstimator.swift in Sources */,
 				5952BF459221B3A60E2F6F93 /* sokoottannApp.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -229,8 +258,8 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODE_SIGN_IDENTITY = "Apple Development";
-				CODE_SIGN_STYLE = Automatic;
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				DEVELOPMENT_TEAM = 9PYJ8Z7APK;
 				INFOPLIST_FILE = Sources/sokoottann/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
@@ -238,8 +267,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.sokoottann.app;
-				PROVISIONING_PROFILE_SPECIFIER = "";
+				PRODUCT_BUNDLE_IDENTIFIER = com.soko.ottan;
 				SDKROOT = iphoneos;
 				SWIFT_VERSION = 5.9;
 				TARGETED_DEVICE_FAMILY = 1;
@@ -313,8 +341,8 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODE_SIGN_IDENTITY = "Apple Development";
-				CODE_SIGN_STYLE = Automatic;
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				DEVELOPMENT_TEAM = 9PYJ8Z7APK;
 				INFOPLIST_FILE = Sources/sokoottann/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
@@ -322,8 +350,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.sokoottann.app;
-				PROVISIONING_PROFILE_SPECIFIER = "";
+				PRODUCT_BUNDLE_IDENTIFIER = com.soko.ottan;
 				SDKROOT = iphoneos;
 				SWIFT_VERSION = 5.9;
 				TARGETED_DEVICE_FAMILY = 1;

@@ -1,19 +1,15 @@
 import SwiftUI
-import MultipeerConnectivity
 
 struct ChatView: View {
     let peer: PeerInfo
-    @ObservedObject var manager: MultipeerManager
+    @ObservedObject var manager: UWBManager
     @Environment(\.dismiss) private var dismiss
 
     @State private var inputText: String = ""
     @FocusState private var isInputFocused: Bool
-    @State private var showSendError = false
 
     private var isConnected: Bool {
-        manager.connectedPeerIDs.contains(where: {
-            $0 == peer.id || $0.displayName == peer.id.displayName
-        })
+        manager.connectedPeerIDs.contains(peer.id)
     }
 
     private var chatMessages: [ChatMessage] {
@@ -72,11 +68,6 @@ struct ChatView: View {
         .onAppear {
             manager.markAsRead(peerID: peer.id)
         }
-        .alert("送信できませんでした", isPresented: $showSendError) {
-            Button("OK", role: .cancel) {}
-        } message: {
-            Text("相手との接続が切れている可能性があります。\n探索画面に戻って再接続してください。")
-        }
     }
 
     // MARK: - Header
@@ -118,9 +109,14 @@ struct ChatView: View {
                     Circle()
                         .fill(isConnected ? Color.green : Color.orange)
                         .frame(width: 7, height: 7)
-                    Text(isConnected ? "接続済み" : "接続中...")
+                    Text(isConnected ? "接続済み" : "接続中…")
                         .font(.system(size: 11, weight: .medium, design: .rounded))
                         .foregroundStyle(isConnected ? Color.green.opacity(0.9) : Color.orange.opacity(0.9))
+                    if !isConnected {
+                        Text("(メッセージは接続後に自動送信)")
+                            .font(.system(size: 10, design: .rounded))
+                            .foregroundStyle(.orange.opacity(0.6))
+                    }
                     if isConnected {
                         Text("·")
                             .font(.system(size: 11))
@@ -218,12 +214,13 @@ struct ChatView: View {
         let text = inputText.trimmingCharacters(in: .whitespaces)
         guard !text.isEmpty else { return }
         let success = manager.sendMessage(text, to: peer.id)
+        // 即時送信・キュー保存どちらも入力欄をクリアする
+        inputText = ""
         if success {
-            inputText = ""
             UIImpactFeedbackGenerator(style: .light).impactOccurred()
         } else {
-            showSendError = true
-            UINotificationFeedbackGenerator().notificationOccurred(.error)
+            // キューに保存された場合は弱い触覚フィードバック
+            UIImpactFeedbackGenerator(style: .soft).impactOccurred()
         }
     }
 }
@@ -248,7 +245,7 @@ struct MessageBubble: View {
                             .fill(
                                 message.isFromSelf
                                     ? LinearGradient(
-                                        colors: [.cyan.opacity(0.75), Color(red: 0.2, green: 0.6, blue: 1.0).opacity(0.75)],
+                                        colors: [.cyan.opacity(message.isPending ? 0.35 : 0.75), Color(red: 0.2, green: 0.6, blue: 1.0).opacity(message.isPending ? 0.35 : 0.75)],
                                         startPoint: .topLeading,
                                         endPoint: .bottomTrailing
                                     )
@@ -267,10 +264,21 @@ struct MessageBubble: View {
                             )
                     )
 
-                Text(timeString(message.timestamp))
-                    .font(.system(size: 10, weight: .medium, design: .rounded))
-                    .foregroundStyle(.white.opacity(0.3))
-                    .padding(.horizontal, 4)
+                HStack(spacing: 4) {
+                    if message.isFromSelf && message.isPending {
+                        Image(systemName: "clock")
+                            .font(.system(size: 9))
+                            .foregroundStyle(.orange.opacity(0.7))
+                        Text("送信待ち")
+                            .font(.system(size: 10, weight: .medium, design: .rounded))
+                            .foregroundStyle(.orange.opacity(0.7))
+                    } else {
+                        Text(timeString(message.timestamp))
+                            .font(.system(size: 10, weight: .medium, design: .rounded))
+                            .foregroundStyle(.white.opacity(0.3))
+                    }
+                }
+                .padding(.horizontal, 4)
             }
 
             if !message.isFromSelf { Spacer(minLength: 50) }
